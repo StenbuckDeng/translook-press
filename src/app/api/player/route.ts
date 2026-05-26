@@ -4,7 +4,7 @@ import { screens, playlists, media } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
-  const code = req.nextUrl.searchParams.get("code")?.toUpperCase();
+  const code = req.nextUrl.searchParams.get("code")?.trim().toUpperCase();
   if (!code) return NextResponse.json({ error: "Missing code" }, { status: 400 });
   const [screen] = await db.select().from(screens).where(eq(screens.pairingCode, code)).limit(1);
   if (!screen) return NextResponse.json({ error: "Screen not found" }, { status: 404 });
@@ -18,7 +18,13 @@ export async function GET(req: NextRequest) {
     if (pl?.items) {
       const items = pl.items as any[];
       const allMedia = await db.select().from(media);
-      mediaItems = items.sort((a:any,b:any)=>a.order-b.order).map((item:any)=>{const m=allMedia.find(m=>m.id===item.mediaId);return m?{...m,duration:item.duration||10}:null;}).filter(Boolean);
+      mediaItems = items
+        .sort((a: any, b: any) => a.order - b.order)
+        .map((item: any) => {
+          const m = allMedia.find(m => m.id === item.mediaId);
+          return m ? { ...m, duration: item.duration || 10 } : null;
+        })
+        .filter(Boolean);
     }
   }
   return NextResponse.json({ screen, playlist, media: mediaItems });
