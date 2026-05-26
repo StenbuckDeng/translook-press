@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "c928237e-e8b7-4db3-945f-6bcda3a404a2"
+      }
+    },
+    "android": {
+      "package": "com.translook.translookpress"
+    }
+  }
+}
