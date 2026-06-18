@@ -17,6 +17,13 @@ export default function PlayerPage() {
       if(!d.media?.length){ setStatus("waiting"); } else { setMedia(d.media); setIdx(0); setStatus("playing"); }
     } catch { if(!silent) setStatus("error"); }
   }, []);
+  // 支持 Flutter WebView 通过 ?autocode=XXX 自动连接
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const autocode = params.get("autocode")?.trim().toUpperCase();
+    if (autocode) { setSavedCode(autocode); fetch_(autocode); }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(()=>{ if(!savedCode) return; const t=setInterval(()=>fetch_(savedCode,true),30000); return()=>clearInterval(t); },[savedCode,fetch_]);
   useEffect(()=>{
     if(status!=="playing"||!media[idx]||media[idx].type==="video") return;
